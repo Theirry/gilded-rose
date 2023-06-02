@@ -31,8 +31,10 @@ namespace GildedTros.App
          The only information I have is that the quality is incremented by a fix number.*/
         public Item UpdateGoodWine(Item Wine)
         {
-            ++Wine.Quality;
-            if(Wine.Quality > 50) {Wine.Quality = 50;}
+            if (Wine.Quality < 50)
+            {
+                ++Wine.Quality;
+            }
             Wine.SellIn = SetSellDate(Wine.SellIn);
             return Wine;
         }
