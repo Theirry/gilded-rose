@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ExpectedObjects;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 using Xunit;
 
@@ -29,6 +30,9 @@ namespace GildedTros.App
             Assert.Equal(1, Items[0].Quality);
             app.UpdateQuality();
             Assert.Equal(0, Items[0].Quality);
+            app.UpdateQuality();
+            Assert.Equal(0, Items[0].Quality);
+            Assert.Equal(-3, Items[0].SellIn);
         }
 
         [Fact]
@@ -96,18 +100,51 @@ namespace GildedTros.App
         [Fact]
         public void testAllOnce()
         {
-            IList<Item> Items = new List<Item> {
-            new Item { Name = "passedSellDate", SellIn = 0, Quality = 4 },
-            new Item { Name = "Backstage passes for Re:factor", SellIn = 10, Quality = 0 },
-            new Item { Name = "B-DAWG Keychain", SellIn = 0, Quality = 80 },
-            new Item { Name = "Good Wine", SellIn = 1, Quality = 49 }
+            //Could not get ApprovalTest to work. So I tried toe quickly improvise with its data.
+            IList<Item> Items = new List<Item>{
+                new Item {Name = "Ring of Cleansening Code", SellIn = 10, Quality = 20},
+                new Item {Name = "Good Wine", SellIn = 2, Quality = 0},
+                new Item {Name = "Elixir of the SOLID", SellIn = 5, Quality = 7},
+                new Item {Name = "B-DAWG Keychain", SellIn = 0, Quality = 80},
+                new Item {Name = "B-DAWG Keychain", SellIn = -1, Quality = 80},
+                new Item {Name = "Backstage passes for Re:factor", SellIn = 15, Quality = 20},
+                new Item {Name = "Backstage passes for Re:factor", SellIn = 10, Quality = 49},
+                new Item {Name = "Backstage passes for HAXX", SellIn = 5, Quality = 49},
+                new Item {Name = "Duplicate Code", SellIn = 3, Quality = 6},
+                new Item {Name = "Long Methods", SellIn = 3, Quality = 6},
+                new Item {Name = "Ugly Variable Names", SellIn = 3, Quality = 6}
             };
+
             GildedTros app = new GildedTros(Items);
             app.UpdateQuality();
-            Assert.Equal(2, Items[0].Quality);
-            Assert.Equal(2, Items[1].Quality);
-            Assert.Equal(80, Items[2].Quality);
-            Assert.Equal(50, Items[3].Quality);
+            //On day 1
+            Assert.Equal(19, Items[0].Quality);
+            Assert.Equal(1, Items[1].Quality);
+            Assert.Equal(6, Items[2].Quality);
+            Assert.Equal(80, Items[3].Quality);
+            Assert.Equal(80, Items[4].Quality);
+            Assert.Equal(21, Items[5].Quality);
+            Assert.Equal(50, Items[6].Quality);
+            Assert.Equal(50, Items[7].Quality);
+            Assert.Equal(4, Items[8].Quality);
+            Assert.Equal(4, Items[9].Quality);
+            Assert.Equal(4, Items[10].Quality);
+            for (int i = 0; i < 14; i++)
+            {
+                app.UpdateQuality();
+            } 
+            //On day 15
+            Assert.Equal(0, Items[0].Quality);
+            Assert.Equal(15, Items[1].Quality);
+            Assert.Equal(0, Items[2].Quality);
+            Assert.Equal(80, Items[3].Quality);
+            Assert.Equal(80, Items[4].Quality);
+            Assert.Equal(50, Items[5].Quality);
+            Assert.Equal(0, Items[6].Quality);
+            Assert.Equal(0, Items[7].Quality);
+            Assert.Equal(0, Items[8].Quality);
+            Assert.Equal(0, Items[9].Quality);
+            Assert.Equal(0, Items[10].Quality);
         }
     }
 }
