@@ -16,36 +16,35 @@ namespace GildedTros.App
             this.Items = Items;
         }
 
-        public int UpdateSellDate(int Date)
+        public int SetSellDate(int Date)
         {
-            return -- Date;
+            return --Date;
         }
-        public int UpdateQuality(int Quality, int SellIn, int DegrationSPeed)
+        public int SetQuality(int Quality, int SellIn, int DegrationSpeed)
         {
-            if (SellIn >= 1) { 
-                if(Quality - NormalQualityIncrement * DegrationSPeed < 0)
-                {
-                    return 0;
-                }
-                return Quality - NormalQualityIncrement * DegrationSPeed; }
-            else { 
-                if(Quality - NormalQualityIncrement * DegrationSPeed * 2 < 0)
-                {
-                    return 0;
-                }
-                return Quality - NormalQualityIncrement * DegrationSPeed * 2; }
+            int multiplier = (SellIn >= 1) ? 1 : 2; // If past SellDate --> quality drops twice as fast.
+            int newQuality = Quality - NormalQualityIncrement * DegrationSpeed * multiplier;
+            return (newQuality < 0) ? 0 : newQuality; // Quality cannot be negative.
         }
+
+        /*These methodes are separated because Good Wine and Backstage Passes do not neccesarily lose or gain quaility in a multiplying manner.
+         The only information I have is that the quality is incremented by a fix number.*/
         public Item UpdateGoodWine(Item Wine)
         {
             ++Wine.Quality;
             if(Wine.Quality > 50) {Wine.Quality = 50;}
-            Wine.SellIn = UpdateSellDate(Wine.SellIn);
+            Wine.SellIn = SetSellDate(Wine.SellIn);
             return Wine;
         }
         public Item UpdateBackstagePass(Item Pass)
         {
-            
-            if(Pass.SellIn <= 10 && Pass.SellIn > 5)
+            //No need to use SetQuality() here since the checks on SellIn are needed either way
+            ////and the Quality only increments until it is set to 0.
+            if (Pass.SellIn > 10)
+            {
+                ++Pass.Quality;
+            }
+            else if(Pass.SellIn <= 10 && Pass.SellIn > 5)
             {
                     Pass.Quality = Pass.Quality + 2;
             }
@@ -61,115 +60,36 @@ namespace GildedTros.App
             {
                 Pass.Quality = 50;
             }
-            Pass.SellIn = UpdateSellDate(Pass.SellIn);
+            Pass.SellIn = SetSellDate(Pass.SellIn);
             return Pass;
         }
         public Item UpdateSmellyItem(Item Smelly)
         {
-            Smelly.Quality = UpdateQuality(Smelly.Quality, Smelly.SellIn, 2);
-            Smelly.SellIn = UpdateSellDate(Smelly.SellIn);
+            Smelly.Quality = SetQuality(Smelly.Quality, Smelly.SellIn, 2);
+            Smelly.SellIn = SetSellDate(Smelly.SellIn);
             return Smelly;
         }
         public Item UpdateNormalItem(Item Item)
         {
-            Item.Quality = UpdateQuality(Item.Quality, Item.SellIn, 1);
-            Item.SellIn = UpdateSellDate(Item.SellIn);
+            Item.Quality = SetQuality(Item.Quality, Item.SellIn, 1);
+            Item.SellIn = SetSellDate(Item.SellIn);
+            return Item;
+        }
+
+        public Item mappFunction(Item Item)
+        {
+            if (Item.Quality >= MinQuality && Item.Quality <= MaxQuality)
+            {
+                if (Item.Name.StartsWith("Good Wine")) { return UpdateGoodWine(Item); }
+                if (Item.Name.StartsWith("Backstage passes")) { return UpdateBackstagePass(Item); }
+                else { return UpdateNormalItem(Item); }
+            }
             return Item;
         }
 
         public void UpdateQuality()
         {
-            
-            
-            //for(var i = 0; i < Items.Count; i++)
-            //{
-            //    var item = Items[i];
-            //    //cheking if == 80 not needed.
-            //    if (item.Quality >= MinQuality && item.Quality <= MaxQuality)  
-            //    {
-            //        if(item.Name.StartsWith("Good Wine") ) { item = UpdateGoodWine(item); }
-            //        if(item.Name.StartsWith("Backstage passes")) { item = UpdateBackstagePass(item); }
-
-            //    }
-            //}
-
-            /*for (var i = 0; i < Items.Count; i++)
-            {
-                if (Items[i].Name != "Good Wine" 
-                    && Items[i].Name != "Backstage passes for Re:factor"
-                    && Items[i].Name != "Backstage passes for HAXX")
-                {
-                    if (Items[i].Quality > 0)
-                    {
-                        if (Items[i].Name != "B-DAWG Keychain")
-                        {
-                            Items[i].Quality = Items[i].Quality - 1;
-                        }
-                    }
-                }
-                else
-                {
-                    if (Items[i].Quality < 50)
-                    {
-                        Items[i].Quality = Items[i].Quality + 1;
-
-                        if (Items[i].Name == "Backstage passes for Re:factor"
-                        || Items[i].Name == "Backstage passes for HAXX")
-                        {
-                            if (Items[i].SellIn < 11)
-                            {
-                                if (Items[i].Quality < 50)
-                                {
-                                    Items[i].Quality = Items[i].Quality + 1;
-                                }
-                            }
-
-                            if (Items[i].SellIn < 6)
-                            {
-                                if (Items[i].Quality < 50)
-                                {
-                                    Items[i].Quality = Items[i].Quality + 1;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (Items[i].Name != "B-DAWG Keychain")
-                {
-                    Items[i].SellIn = Items[i].SellIn - 1;
-                }
-
-                if (Items[i].SellIn < 0)
-                {
-                    if (Items[i].Name != "Good Wine")
-                    {
-                        if (Items[i].Name != "Backstage passes for Re:factor"
-                            && Items[i].Name != "Backstage passes for HAXX")
-                        {
-                            if (Items[i].Quality > 0)
-                            {
-                                if (Items[i].Name != "B-DAWG Keychain")
-                                {
-                                    Items[i].Quality = Items[i].Quality - 1;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            Items[i].Quality = Items[i].Quality - Items[i].Quality;
-                        }
-                    }
-                    else
-                    {
-                        if (Items[i].Quality < 50)
-                        {
-                            Items[i].Quality = Items[i].Quality + 1;
-                        }
-                    }
-                }
-            }*/
-
+            Item[] mappedItems = Items.Select(item => mappFunction(item)).ToArray();
         }
     }
 }

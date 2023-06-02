@@ -32,7 +32,7 @@ namespace GildedTros.App
         }
 
         [Fact]
-        public void maxQuality()
+        public void GoodWineQuality()
         {
             //Testing if quality does not go above 50.
             //Testing if Good Wine only goes up in quality.
@@ -71,6 +71,7 @@ namespace GildedTros.App
             app.UpdateQuality();
             Assert.Equal(6, Items[0].Quality);
             Items[0].SellIn = 0; // Past sell date
+            app.UpdateQuality();
             Assert.Equal(0, Items[0].Quality);
         }
 
