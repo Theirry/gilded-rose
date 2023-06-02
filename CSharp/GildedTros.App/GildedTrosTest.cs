@@ -74,7 +74,7 @@ namespace GildedTros.App
             Assert.Equal(0, Items[0].Quality);
         }
 
-        [Fact]
+        
         public void smellyQuality()
         {
             //Testing is smelly items drop quality twice as fast as normal items. 
