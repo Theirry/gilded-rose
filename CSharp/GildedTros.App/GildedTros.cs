@@ -84,6 +84,7 @@ namespace GildedTros.App
             {
                 if (Item.Name.StartsWith("Good Wine")) { return UpdateGoodWine(Item); }
                 if (Item.Name.StartsWith("Backstage passes")) { return UpdateBackstagePass(Item); }
+                if(Item.Name.StartsWith("Duplicate Code") || Item.Name.StartsWith("Long Methods") || Item.Name.StartsWith("Ugly Variable Names")) { return UpdateSmellyItem(Item); }
                 else { return UpdateNormalItem(Item); }
             }
             return Item;

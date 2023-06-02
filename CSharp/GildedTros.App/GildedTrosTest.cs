@@ -75,13 +75,13 @@ namespace GildedTros.App
             Assert.Equal(0, Items[0].Quality);
         }
 
-        
+        [Fact]
         public void smellyQuality()
         {
             //Testing is smelly items drop quality twice as fast as normal items. 
             IList<Item> Items = new List<Item> { new Item { Name = "Duplicate Code", SellIn = 1, Quality = 6 }, 
-                new Item { Name = "Long Methods", SellIn = 2, Quality = 6 }, 
-                new Item { Name = "Ugly Variable Names", SellIn = 2, Quality = 6 } };
+                new Item { Name = "Long Methods", SellIn = 1, Quality = 6 }, 
+                new Item { Name = "Ugly Variable Names", SellIn = 1, Quality = 6 } };
             GildedTros app = new GildedTros(Items);
             app.UpdateQuality(); //Not past sell date
             Assert.Equal(4, Items[0].Quality);
